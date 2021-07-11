@@ -9,7 +9,8 @@ dotenv.config();
 
 const AVALANCHE_MAINNET_URL = process.env.AVALANCHE_MAINNET_URL;
 const AVALANCHE_FUJI_URL = process.env.AVALANCHE_FUJI_URL;
-
+const MATIC_MAINNET_URL = "https://rpc-mainnet.maticvigil.com/v1/22457d52d868eef361e5ebce5cbd3f83cf234ad5";
+//const TEST = "https://rpc-mainnet.matic.network";
 const PK_USER = process.env.PK_USER;
 const PK_OWNER = process.env.PK_OWNER;
 const PK_TEST = process.env.PK_TEST;
@@ -22,6 +23,13 @@ task("checkFarmState", "Gives a nice output of the state of the farm")
   .addParam("farm", "Farm to check the state of")
   .setAction(async ({ farm }) => farmData(farm));
 
+  task("accounts", "Prints the list of accounts", async () => {
+    const accounts = await ethers.getSigners();
+  
+    for (const account of accounts) {
+      console.log(account.address);
+    }
+  });
 
 // You need to export an object to set up your config
 // Go to https://hardhat.org/config/ to learn more
@@ -40,7 +48,7 @@ module.exports = {
       }
     }
   },
-  defaultNetwork: "mainnet",
+  defaultNetwork: "hardhat",
   namedAccounts: {
     deployer: {
       default: 1,
@@ -62,31 +70,31 @@ module.exports = {
   },
   networks: {
     hardhat: {
-      chainId: 43114,
+      chainId: 137,
       gasPrice: 225000000000,
       throwOnTransactionFailures: false,
       loggingEnabled: true,
       forking: {
-        url: AVALANCHE_MAINNET_URL,
-        enabled: true,
-      },
+        url: "https://polygon-mainnet.g.alchemy.com/v2/nGUNl3upCawPa6Rd0E97kpmOLte8HTNX",
+        enabled: true
+      }
     },
     mainnet: {
       chainId: 43114,
       gasPrice: 225000000000,
       url: AVALANCHE_MAINNET_URL,
-      accounts: [
+      seeds: [
         PK_USER,
         PK_OWNER
       ]
     },
     fuji: {
-      chainId: 43113,
+      chainId: 1337,
       gasPrice: 225000000000,
-      url: AVALANCHE_FUJI_URL,
-      accounts: [
+      url: "http://127.0.0.1:7545",
+      seeds: [
         PK_TEST
       ]
     },
-  },
+  }
 };
